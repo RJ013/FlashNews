@@ -52,7 +52,7 @@ export default function Home() {
         const data = await response.json();
 
         // Map GNews API response to our Article type
-        const formattedNews = data.articles.map((article, index) => ({
+        const formattedNews = data.articles.map((article: any, index: number) => ({
           id: index,
           title: article.title,
           content: article.content,
