@@ -32,8 +32,18 @@ const categories = [
 export default function Home() {
   const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("General");
+  const [activeCategory, setActiveCategory] = useState("Select Category");
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  // Simulate categories loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCategoriesLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,28 +107,40 @@ export default function Home() {
     };
   }, [showCategoryMenu]);
 
+  // Category placeholder component
+  const CategoryPlaceholder = () => (
+    <div className="w-full max-w-xs animate-pulse">
+      <div className="relative">
+        <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
       <div className="flex-grow flex items-center justify-center px-4">
-        {/* Category Selector */}
-        {!loading && (
+        {/* Category Selector with Placeholder */}
+        {categoriesLoading ? (
+          <CategoryPlaceholder />
+        ) : !loading && (
           <div className="w-full max-w-xs">
             <div className="relative">
               <button
-                className="w-full flex items-center justify-between bg-gray-800 px-4 py-3 rounded-lg shadow-md border border-gray-700 text-gray-100 hover:bg-gray-700"
+                className="w-full flex items-center justify-between bg-white px-4 py-3 rounded-lg shadow-md border border-gray-200 hover:bg-gray-50"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowCategoryMenu(!showCategoryMenu);
                 }}
+                style={{ color: "#000000" }}
               >
-                <span className="font-semibold text-gray-100">{activeCategory}</span>
+                <span className="font-semibold" style={{ color: "#000000" }}>{activeCategory}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 text-gray-300 transition-transform ${showCategoryMenu ? 'rotate-180' : ''}`}
+                  className={`h-5 w-5 transition-transform ${showCategoryMenu ? 'rotate-180' : ''}`}
                   viewBox="0 0 20 20"
-                  fill="currentColor"
+                  fill="#000000"
                 >
                   <path
                     fillRule="evenodd"
@@ -129,15 +151,16 @@ export default function Home() {
               </button>
 
               {showCategoryMenu && (
-                <div className="absolute z-20 mt-1 w-full bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+                <div className="absolute z-20 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200">
                   {categories.map((category) => (
                     <button
                       key={category}
-                      className={`w-full text-left px-4 py-3 border-b border-gray-700 last:border-0 ${
+                      className={`w-full text-left px-4 py-3 border-b border-gray-200 last:border-0 ${
                         activeCategory === category
-                          ? "bg-gray-700 text-blue-400 font-semibold"
-                          : "text-gray-100 hover:bg-gray-700"
+                          ? "bg-gray-100 font-semibold"
+                          : "hover:bg-gray-50"
                       }`}
+                      style={{ color: activeCategory === category ? "#2563eb" : "#000000" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCategoryChange(category);
@@ -157,7 +180,7 @@ export default function Home() {
          <div className="flex justify-center items-center min-h-screen">
          <div className="text-center">
            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto mb-3"></div>
-           <p className="text-gray-500 text-sm">Loading news...</p>
+           <p className="text-gray-600 text-sm">Loading news...</p>
          </div>
        </div>
       ) : (
